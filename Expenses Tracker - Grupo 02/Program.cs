@@ -2,7 +2,7 @@
 using System.Diagnostics.Tracing;
 using System;
 using System.Collections.Generic;
-using static Expenses_Tracker___Grupo_02.accounts;
+using static Expenses_Tracker___Grupo_02.Category;
 using Spectre.Console;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Principal;
