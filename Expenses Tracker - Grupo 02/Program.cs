@@ -17,7 +17,7 @@ var tableTitle = new Table();
 var option = "";
 var rule = new Rule("Menu");
 var tableMenu = new Table();
-tableTitle.AddColumn("Intec - Expenses Tracker").Centered();
+tableTitle.AddColumn("Intec - Expense Tracker").Centered();
 tableTitle.Expand();
 tableTitle.Columns[0].Centered();
 
@@ -49,8 +49,14 @@ switch (option)
         switch (option)
         {
             case "New transaction.":
+                NewTrans:
                 Console.Write("Enter the name of the transaction: ");
                 var nameTransaction = Console.ReadLine();
+                if (String.IsNullOrEmpty(nameTransaction))
+                {
+                    Console.WriteLine("You must fill the form.");
+                    goto NewTrans;
+                }
                 Console.Write("\nType [Expense/Income]: ");
                 var type = Console.ReadLine();
                 var account = "";
@@ -382,62 +388,10 @@ switch (option)
 
         break;
     case "Help":
-        Console.WriteLine("Intec - Expenses Tracker will help you keep track of your money. \n" +
+        Console.WriteLine("Intec - Expense Tracker will help you keep track of your money. \n" +
             "With simple and intuitive graphics you can check the progress of expenses.");
-        break;
+        Console.ReadKey();
+        goto Menu;
     default:
         break;
 }
-
-
-//List<string> myList = new List<string>();
-//Class1 clase = new Class1();
-
-//Menu:
-//Console.Clear();
-//Console.WriteLine("Que desea hacer?");
-//Console.WriteLine("1. Agregar un nombre a la lista.");
-//Console.WriteLine("2. Editar nombre de la lista.");
-//Console.WriteLine("3. Eliminar nombre de la lista.");
-//Console.WriteLine("4. Ver lista completa.");
-//Console.WriteLine("5. Salir del programa.");
-//int input = int.Parse(Console.ReadLine());
-
-
-
-//switch (input)
-//{
-//    case 1:
-//        Console.WriteLine("\nIngrese un nombre:");
-//        string name = Console.ReadLine();
-//        clase.crearCategoria(name);
-//        Console.ReadKey();
-//        goto Menu;
-
-//    case 2:
-//        Console.WriteLine("\nQue categoria desea editar?");
-//        string edited = Console.ReadLine();
-//        Console.WriteLine("\nCual es el nuevo nombre?");
-//        string edit = Console.ReadLine();
-//        clase.editarCategoria(edit,edited);
-//        Console.ReadKey();
-//        goto Menu;
-//    case 3:
-//        Console.WriteLine("\nIngrese el nombre a eliminar:");
-//        string delete = Console.ReadLine();
-//        clase.eliminarCategoria(delete);
-//        Console.ReadKey();
-//        goto Menu;
-//    case 4:
-//        Console.Write("\n");
-//        clase.verCategorias();
-//        Console.ReadKey();
-//        goto Menu;
-//    case 5:
-//        break;
-//    default:
-//        Console.WriteLine("\nOpcion no permitida.");
-//        break;
-//}
-
-
