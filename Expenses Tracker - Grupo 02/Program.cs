@@ -8,6 +8,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Principal;
 using Expenses_Tracker___Grupo_02;
 
+
+
 List<string> listAccount = new List<string>();
 List<string> listCategory = new List<string>();
 CRUDs aux = new CRUDs();
@@ -38,7 +40,7 @@ switch (option)
 {
     //NEW ITEM
     case "New item.":
-        NewItem:
+    NewItem:
 
         option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -49,7 +51,7 @@ switch (option)
         switch (option)
         {
             case "New transaction.":
-                NewTrans:
+            NewTrans:
                 Console.Write("Enter the name of the transaction: ");
                 var nameTransaction = Console.ReadLine();
                 if (String.IsNullOrEmpty(nameTransaction))
