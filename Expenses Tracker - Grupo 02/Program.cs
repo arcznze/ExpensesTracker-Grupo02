@@ -11,7 +11,7 @@ using Prueba;
 using System.Transactions;
 
 
-var dataAccess = new DataAccess();
+
 List<string> listAccount = new List<string>();
 List<string> listCategory = new List<string>();
 
@@ -42,7 +42,7 @@ switch (option)
 {
     //NEW ITEM
     case "New item.":
-        NewItem:
+    NewItem:
 
         option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -53,7 +53,7 @@ switch (option)
         switch (option)
         {
             case "New transaction.":
-                NewTrans:
+            NewTrans:
                 Console.Write("Enter the name of the transaction: ");
                 var nameTransaction = Console.ReadLine();
                 if (String.IsNullOrEmpty(nameTransaction))
