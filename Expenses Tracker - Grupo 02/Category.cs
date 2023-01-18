@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Expenses_Tracker___Grupo_02
 {
-    public class accounts
+    public class Category
     {
         List<string> listaCategorias = new List<string>();
+
         public string crearCategoria(string x)
         {
             listaCategorias.Add(x);
