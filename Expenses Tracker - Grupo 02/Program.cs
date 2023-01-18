@@ -6,17 +6,18 @@ using static Expenses_Tracker___Grupo_02.Category;
 using Spectre.Console;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Principal;
+using Prueba;
 
 
-List<string> listCuenta = new List<string>();
+var dataAccess = new DataAccess();
+var listCuenta = new List<string>();
 
-
-//MENU PRINCIPAL
 var tableTitle = new Table();
 var option = "";
-var optionCuenta = "";
 var rule = new Rule("Menu");
 var tableMenu = new Table();
+
+//MENU PRINCIPAL
 
 tableTitle.AddColumn("Intec - Expenses Tracker").Centered();
 tableTitle.Expand();
@@ -33,8 +34,8 @@ Console.WriteLine();
 option = AnsiConsole.Prompt(
     new SelectionPrompt<string>()
         .AddChoices(new[] {
-            "New transaction", "View transactions", "Edit transactions", "Help", "Exit"
-        }));
+                    "New transaction", "View transactions", "Edit transactions", "Help", "Exit"
+                }));
 
 switch (option)
 {
@@ -50,46 +51,58 @@ switch (option)
             Console.WriteLine("\nIt looks like you haven't created an account type yet");
             Console.WriteLine("What kind of account is it?");
             account = Console.ReadLine();
+            var newAccount = new Account { Name = account };
+            dataAccess.CreateAccount(newAccount);
             listCuenta.Add(account);
-
         }
         else
         {
-            for (int i = 0; i < listCuenta.Count; i++)
-            {
-                account = AnsiConsole.Prompt(
-                    new SelectionPrompt<string>()
-                    .Title("Type of account {Savings/Current/etc...}: ")
-                    .AddChoices(new[] {
-                                listCuenta[i],
-                    }));
-            }
+            var accounts = dataAccess.GetAccount();
+            account = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .Title("Type of account {Savings/Current/etc...}: ")
+                .AddChoices(accounts.Select(a => a.Name).ToArray()));
         }
-        Console.Write("\nType of account [Savings/Current/etc...]: " + account.ToString());
         Console.Write("\nCategory: ");
-        var category = Console.ReadLine();
+        var categoryName = Console.ReadLine();
+        var category = dataAccess.GetCategory(categoryName);
+        if (category == null)
+        {
+            category = new Category { Name = categoryName };
+            dataAccess.CreateCategory(category);
+        }
         Console.Write("Amount: ");
         var amount = Console.ReadLine();
         Console.Write("Description: ");
         var description = Console.ReadLine();
-        string dateTime = DateTime.Now.ToString();
-        Console.Write("\n");
+
+        var newTransaction = new Transaction
+        {
+            Name = nameTransaction,
+            Type = type,
+            Account = dataAccess.GetAccountByName(account),
+            Category = category,
+            Amount = decimal.Parse(amount),
+            Description = description,
+            Date = DateTime.Now
+        };
+        dataAccess.CreateTransaction(newTransaction);
 
         var tableNewTransaction = new Table();
         tableNewTransaction.AddColumn(nameTransaction);
         tableNewTransaction.AddColumn("X");
         tableNewTransaction.AddRow("Type", type);
         tableNewTransaction.AddRow("Type of account", account);
-        tableNewTransaction.AddRow("Category", category);
+        tableNewTransaction.AddRow("Category", categoryName);
         tableNewTransaction.AddRow("Amount", amount);
         tableNewTransaction.AddRow("Description", description);
-        tableNewTransaction.AddRow("Date / Time", dateTime);
+        tableNewTransaction.AddRow("Date / Time", newTransaction.Date.ToString());
         AnsiConsole.Write(tableNewTransaction);
 
         option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .AddChoices(new[] {
-                    "Back", "Exit"
+                            "Back", "Exit"
                 }));
 
         switch (option)
@@ -100,37 +113,85 @@ switch (option)
             default:
                 break;
         }
-
-        //if (listCuenta.Count == 0)
-        //{
-        //    optionCuenta = AnsiConsole.Prompt(
-        //        new SelectionPrompt<string>()
-        //        .AddChoices(new[] {
-        //            "Add new account"
-        //        }));
-        //}
-        //else
-        //{
-        //    optionCuenta = AnsiConsole.Prompt(
-        //        new SelectionPrompt<string>()
-        //        .AddChoices(new[] {
-        //            "Add new account", "View accounts", "Edit accounts", "Delete account"
-        //        }));
-        //}
-
-
         break;
+
+    //if (listCuenta.Count == 0)
+    //{
+    //    optionCuenta = AnsiConsole.Prompt(
+    //        new SelectionPrompt<string>()
+    //        .AddChoices(new[] {
+    //            "Add new account"
+    //        }));
+    //}
+    //else
+    //{
+    //    optionCuenta = AnsiConsole.Prompt(
+    //        new SelectionPrompt<string>()
+    //        .AddChoices(new[] {
+    //            "Add new account", "View accounts", "Edit accounts", "Delete account"
+    //        }));
+    //}
+
+
     case "View transactions":
+        var transactions = dataAccess.GetTransaction();
+        var tableTransactions = new Table();
+        tableTransactions.AddColumns("Name", "Type", "Account", "Category", "Amount", "Description", "Date / Time");
+
+
+        foreach (var transaction in transactions)
+        {
+            if (transaction.Account != null && transaction.Category != null)
+            {
+                tableTransactions.AddRow(new[] {transaction.Name, transaction.Type, transaction.Account.Name,
+                        transaction.Category.Name, transaction.Amount.ToString(),
+                        transaction.Description, transaction.Date.ToString() });
+            }
+        }
+
+        AnsiConsole.Write(tableTransactions);
+        option = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .AddChoices(new[] {
+                            "Back", "Exit"
+                }));
+
+        switch (option)
+        {
+            case "Back":
+                Console.Clear();
+                goto Menu;
+            default:
+                break;
+        }
         break;
     case "Edit transactions":
+        //TODO: Implementar opción para editar transacciones usando DataAccess
         break;
     case "Help":
         Console.WriteLine("Intec - Expenses Tracker will help you keep track of your money. \n" +
             "With simple and intuitive graphics you can check the progress of expenses.");
+
+        option = AnsiConsole.Prompt(
+        new SelectionPrompt<string>()
+            .AddChoices(new[] {
+                            "Back", "Exit"
+            }));
+
+        switch (option)
+        {
+            case "Back":
+                Console.Clear();
+                goto Menu;
+            default:
+                break;
+        }
         break;
     default:
         break;
 }
+    
+
 
 
 //List<string> myList = new List<string>();
