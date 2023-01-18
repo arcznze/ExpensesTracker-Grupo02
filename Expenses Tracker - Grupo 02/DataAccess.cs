@@ -32,10 +32,7 @@ namespace Prueba
         {
             return _categories.FirstOrDefault(c => c.Name == name);
         }
-        public List<Category> GetCategory()
-        {
-            return _categories;
-        }
+
         // Método para actualizar una categoría
         public void UpdateCategory(string name, string newName)
         {
@@ -63,7 +60,7 @@ namespace Prueba
         }
 
         // Método para obtener una cuenta por su nombre
-        public Account GetAccount(string name)
+        public Account GetAccountByName(string name)
         {
             return _accounts.FirstOrDefault(a => a.Name == name);
         }
@@ -79,6 +76,7 @@ namespace Prueba
             if (existingAccount != null)
             {
                 existingAccount.Name = account.Name;
+                existingAccount.Balance = account.Balance;
             }
         }
 
@@ -109,9 +107,9 @@ namespace Prueba
         }
 
         // Método para actualizar una transacción
-        public void UpdateTransaction(Transaction newTransaction)
+        public void UpdateTransaction(string name, Transaction newTransaction)
         {
-            var existingTransaction = _transactions.FirstOrDefault(t => t.Name == newTransaction.Name);
+            var existingTransaction = _transactions.FirstOrDefault(t => t.Name == name);
             if (existingTransaction != null)
             {
                 existingTransaction.Type = newTransaction.Type;
