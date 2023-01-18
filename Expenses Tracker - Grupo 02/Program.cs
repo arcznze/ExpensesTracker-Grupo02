@@ -2,7 +2,7 @@
 using System.Diagnostics.Tracing;
 using System;
 using System.Collections.Generic;
-using static Expenses_Tracker___Grupo_02.Category;
+using static Expenses_Tracker___Grupo_02.accounts;
 using Spectre.Console;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Principal;
@@ -41,36 +41,52 @@ switch (option)
     case "New transaction":
         Console.WriteLine("Enter the name of the transaction: ");
         var nameTransaction = Console.ReadLine();
-        Console.Write("\n");
-        Console.Write("Type [Expense/Income]: ");
+        Console.Write("\nType [Expense/Income]: ");
         var type = Console.ReadLine();
         var account = "";
         if (listCuenta.Count == 0)
         {
             Console.WriteLine("\nIt looks like you haven't created an account type yet");
-            Console.WriteLine("What kind of account is it?");
+            Console.Write("What kind of account is it? ");
             account = Console.ReadLine();
             listCuenta.Add(account);
 
         }
         else
         {
-            for (int i = 0; i < listCuenta.Count; i++)
+            var accountAux = new SelectionPrompt<string>();
+            foreach (var accounts in listCuenta)
             {
-                account = AnsiConsole.Prompt(
-                    new SelectionPrompt<string>()
-                    .Title("Type of account {Savings/Current/etc...}: ")
-                    .AddChoices(new[] {
-                                listCuenta[i],
-                    }));
+                accountAux.AddChoice(accounts);
             }
+            accountAux.AddChoice("Add new account");
+
+            account = AnsiConsole.Prompt(accountAux);
+
+            if (account == "Add new account")
+            {
+                Console.WriteLine("\nWhat kind of account is it?");
+                account = Console.ReadLine();
+                listCuenta.Add(account);
+            }
+
+            //account = AnsiConsole.Prompt(
+            //        new SelectionPrompt<string>()
+            //        .Title("\nType of account {Savings/Current/etc...}: ")
+            //        .AddChoices(new[] {
+            //            "Add new account",
+            //            for (int i = 0; i < listCuenta.Count; i++)
+            //{
+            //    Console.WriteLine(listCuenta[i]);
+            //}
         }
-        Console.Write("\nType of account [Savings/Current/etc...]: " + account.ToString());
+
+        Console.Write("\nType of account [Savings/Current/etc...]: " + account.ToString() + "\n");
         Console.Write("\nCategory: ");
         var category = Console.ReadLine();
-        Console.Write("Amount: ");
+        Console.Write("\nAmount: ");
         var amount = Console.ReadLine();
-        Console.Write("Description: ");
+        Console.Write("\nDescription: ");
         var description = Console.ReadLine();
         string dateTime = DateTime.Now.ToString();
         Console.Write("\n");
