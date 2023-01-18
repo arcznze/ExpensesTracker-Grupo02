@@ -35,82 +35,194 @@ option = AnsiConsole.Prompt(
 
 switch (option)
 {
+    //NEW ITEM
     case "New item.":
-        Console.WriteLine("Enter the name of the transaction: ");
-        var nameTransaction = Console.ReadLine();
-        Console.Write("\nType [Expense/Income]: ");
-        var type = Console.ReadLine();
-        var account = "";
-        if (listAux.Count == 0)
-        {
-            Console.WriteLine("\nIt looks like you haven't created an account type yet");
-            Console.Write("What kind of account is it? ");
-            account = Console.ReadLine();
-            aux.createAccount(listAux, account);
-
-        }
-        else
-        {
-            var accountAux = new SelectionPrompt<string>();
-            foreach (var accounts in listAux)
-            {
-                accountAux.AddChoice(accounts);
-            }
-            accountAux.AddChoice("Add new account");
-
-            account = AnsiConsole.Prompt(accountAux);
-
-            if (account == "Add new account")
-            {
-                Console.WriteLine("\nWhat kind of account is it?");
-                account = Console.ReadLine();
-                aux.createAccount(listAux, account);
-            }
-        }
-
-        Console.Write("\nType of account [Savings/Current/etc...]: " + account.ToString() + "\n");
-        Console.Write("\nCategory: ");
-        var category = Console.ReadLine();
-        Console.Write("\nAmount: ");
-        var amount = Console.ReadLine();
-        Console.Write("\nDescription: ");
-        var description = Console.ReadLine();
-        string dateTime = DateTime.Now.ToString();
-        Console.Write("\n");
-
-        var tableNewTransaction = new Table();
-        tableNewTransaction.AddColumn(nameTransaction);
-        tableNewTransaction.AddColumn("X");
-        tableNewTransaction.AddRow("Type", type);
-        tableNewTransaction.AddRow("Type of account", account);
-        tableNewTransaction.AddRow("Category", category);
-        tableNewTransaction.AddRow("Amount", amount);
-        tableNewTransaction.AddRow("Description", description);
-        tableNewTransaction.AddRow("Date / Time", dateTime);
-        AnsiConsole.Write(tableNewTransaction);
+        NewItem:
 
         option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .AddChoices(new[] {
+                    "New transaction.", "New account.", "New category.", "Back", "Exit"
+        }));
+
+        switch (option)
+        {
+            case "New transaction.":
+                Console.WriteLine("Enter the name of the transaction: ");
+                var nameTransaction = Console.ReadLine();
+                Console.Write("\nType [Expense/Income]: ");
+                var type = Console.ReadLine();
+                var account = "";
+                if (listAux.Count == 0)
+                {
+                    Console.WriteLine("\nIt looks like you haven't created an account type yet");
+                    Console.Write("What kind of account is it? ");
+                    account = Console.ReadLine();
+                    aux.createAccount(listAux, account);
+
+                }
+                else
+                {
+                    var accountAux = new SelectionPrompt<string>();
+                    foreach (var accounts in listAux)
+                    {
+                        accountAux.AddChoice(accounts);
+                    }
+                    accountAux.AddChoice("Add new account");
+
+                    account = AnsiConsole.Prompt(accountAux);
+
+                    if (account == "Add new account")
+                    {
+                        Console.Write("\nWhat kind of account is it?");
+                        account = Console.ReadLine();
+                        aux.createAccount(listAux, account);
+                    }
+                }
+
+                Console.Write("\nType of account [Savings/Current/etc...]: " + account.ToString() + "\n");
+                Console.Write("\nCategory: ");
+                var category = Console.ReadLine();
+                Console.Write("\nAmount: ");
+                var amount = Console.ReadLine();
+                Console.Write("\nDescription: ");
+                var description = Console.ReadLine();
+                string dateTime = DateTime.Now.ToString();
+                Console.Write("\n");
+
+                var tableNewTransaction = new Table();
+                tableNewTransaction.AddColumn(nameTransaction);
+                tableNewTransaction.AddColumn("X");
+                tableNewTransaction.AddRow("Type", type);
+                tableNewTransaction.AddRow("Type of account", account);
+                tableNewTransaction.AddRow("Category", category);
+                tableNewTransaction.AddRow("Amount", amount);
+                tableNewTransaction.AddRow("Description", description);
+                tableNewTransaction.AddRow("Date / Time", dateTime);
+                AnsiConsole.Write(tableNewTransaction);
+
+                option = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .AddChoices(new[] {
                     "Back", "Exit"
+                        }));
+
+                switch (option)
+                {
+                    case "Back":
+                        Console.Clear();
+                        goto NewItem;
+                }
+                break;
+            case "New account.":
+                Console.Write("What kind of account is it? ");
+                var newAccount = Console.ReadLine();
+                aux.createAccount(listAux, newAccount);
+
+                Console.WriteLine("Account created.\n");
+                option = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .AddChoices(new[] {
+                            "Back", "Exit"
+                    }));
+                switch (option)
+                {
+                    case "Back":
+                        Console.Clear();
+                        goto NewItem;
+                }
+                break;
+            case "New category.":
+                break;
+            case "Back":
+                Console.Clear();
+                goto Menu;
+        }
+        break;
+
+    //VIEW ITEMS
+    case "View items.":
+    ViewItems:
+        option = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .AddChoices(new[] {
+                        "View transactions.", "View accounts.", "View categories.", "Back", "Exit"
                 }));
 
         switch (option)
         {
+            case "View transactions.":
+                break;
+            case "View accounts.":
+                aux.readAccount(listAux);
+                Console.WriteLine("\n");
+                option = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .AddChoices(new[] {
+                        "Back", "Exit"
+                    }));
+                switch (option)
+                {
+                    case "Back":
+                        Console.Clear();
+                        goto ViewItems;
+                }
+                break;
+            case "View categories.":
+                break;
             case "Back":
-                Console.Clear();
                 goto Menu;
             default:
                 break;
         }
 
-        break;
-    case "View items.":
+
         break;
     case "Edit items.":
+    EditItems:
+        option = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .AddChoices(new[] {
+                            "Edit transactions.", "Edit accounts.", "Edit categories.", "Back", "Exit"
+                }));
+
+        switch (option)
+        {
+            case "Edit transactions.":
+                break;
+            case "Edit accounts.":
+
+                Console.Write("Which account would you like to change? ");
+                var oldAccount = Console.ReadLine();
+                Console.Write("To which? ");
+                var newAccount = Console.ReadLine();
+                aux.editAccount(listAux, oldAccount, newAccount);
+
+                Console.WriteLine("Changes made.");
+                option = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .AddChoices(new[] {
+                            "Back", "Exit"
+                    }));
+                switch (option)
+                {
+                    case "Back":
+                        Console.Clear();
+                        goto EditItems;
+                }
+                break;
+            case "Edit categories.":
+                break;
+            case "Back":
+                goto Menu;
+            default:
+                break;
+        }
         break;
+
+    //DELETE ITEMS
     case "Delete items.":
-        Items:
+    DeletedItems:
         option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .AddChoices(new[] {
@@ -132,7 +244,7 @@ switch (option)
 
                 foreach (string fruit in deletedAccounts)
                 {
-                    aux.deleteAccount(listAux,fruit);
+                    aux.deleteAccount(listAux, fruit);
                 }
 
                 Console.WriteLine($"You delete those accounts.");
@@ -147,7 +259,7 @@ switch (option)
                 {
                     case "Back":
                         Console.Clear();
-                        goto Items;
+                        goto DeletedItems;
                 }
                 break;
             case "Delete categories.":
