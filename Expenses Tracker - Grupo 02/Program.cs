@@ -2,14 +2,14 @@
 using System.Diagnostics.Tracing;
 using System;
 using System.Collections.Generic;
-using static Expenses_Tracker___Grupo_02.accounts;
+using static Expenses_Tracker___Grupo_02.Accounts;
 using Spectre.Console;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Principal;
 using Expenses_Tracker___Grupo_02;
 
 List<string> listAux = new List<string>();
-accounts aux = new accounts();
+Accounts aux = new Accounts();
 
 //MENU PRINCIPAL
 var tableTitle = new Table();
@@ -19,6 +19,7 @@ var tableMenu = new Table();
 tableTitle.AddColumn("Intec - Expenses Tracker").Centered();
 tableTitle.Expand();
 tableTitle.Columns[0].Centered();
+
 Menu:
 AnsiConsole.Write(tableTitle);
 rule.Centered();
@@ -29,12 +30,12 @@ Console.WriteLine();
 option = AnsiConsole.Prompt(
     new SelectionPrompt<string>()
         .AddChoices(new[] {
-            "New transaction.", "View transactions.", "Edit items.", "Delete items.", "Help", "Exit"
+            "New item.", "View items.", "Edit items.", "Delete items.", "Help", "Exit"
         }));
 
 switch (option)
 {
-    case "New transaction.":
+    case "New item.":
         Console.WriteLine("Enter the name of the transaction: ");
         var nameTransaction = Console.ReadLine();
         Console.Write("\nType [Expense/Income]: ");
@@ -45,7 +46,7 @@ switch (option)
             Console.WriteLine("\nIt looks like you haven't created an account type yet");
             Console.Write("What kind of account is it? ");
             account = Console.ReadLine();
-            listAux.Add(account);
+            aux.createAccount(listAux, account);
 
         }
         else
@@ -63,18 +64,8 @@ switch (option)
             {
                 Console.WriteLine("\nWhat kind of account is it?");
                 account = Console.ReadLine();
-                listAux.Add(account);
+                aux.createAccount(listAux, account);
             }
-
-            //account = AnsiConsole.Prompt(
-            //        new SelectionPrompt<string>()
-            //        .Title("\nType of account {Savings/Current/etc...}: ")
-            //        .AddChoices(new[] {
-            //            "Add new account",
-            //            for (int i = 0; i < listCuenta.Count; i++)
-            //{
-            //    Console.WriteLine(listCuenta[i]);
-            //}
         }
 
         Console.Write("\nType of account [Savings/Current/etc...]: " + account.ToString() + "\n");
@@ -113,26 +104,8 @@ switch (option)
                 break;
         }
 
-        //if (listCuenta.Count == 0)
-        //{
-        //    optionCuenta = AnsiConsole.Prompt(
-        //        new SelectionPrompt<string>()
-        //        .AddChoices(new[] {
-        //            "Add new account"
-        //        }));
-        //}
-        //else
-        //{
-        //    optionCuenta = AnsiConsole.Prompt(
-        //        new SelectionPrompt<string>()
-        //        .AddChoices(new[] {
-        //            "Add new account", "View accounts", "Edit accounts", "Delete account"
-        //        }));
-        //}
-
-
         break;
-    case "View transactions.":
+    case "View items.":
         break;
     case "Edit items.":
         break;
@@ -149,24 +122,20 @@ switch (option)
             case "Delete transactions.":
                 break;
             case "Delete accounts.":
-                var deletedAccount = new MultiSelectionPrompt<string>();
+                var deletedAccount = new MultiSelectionPrompt<string>().NotRequired();
                 foreach (var accounts in listAux)
                 {
                     deletedAccount.AddChoice(accounts);
                 }
+
                 var deletedAccounts = AnsiConsole.Prompt(deletedAccount);
 
                 foreach (string fruit in deletedAccounts)
                 {
-                    aux.eliminarCategoria(listAux,fruit);
+                    aux.deleteAccount(listAux,fruit);
                 }
 
                 Console.WriteLine($"You delete those accounts.");
-
-                foreach (string fruit in listAux)
-                {
-                    Console.WriteLine(fruit);
-                }
 
                 option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
