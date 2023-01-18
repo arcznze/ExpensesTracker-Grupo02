@@ -15,6 +15,7 @@ namespace Prueba
     public class Account
     {
         public string Name { get; set; }
+        public decimal Balance { get; set; }
     }
 
     // Clase para representar una Transacción
