@@ -6,56 +6,52 @@ using static Expenses_Tracker___Grupo_02.accounts;
 using Spectre.Console;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Principal;
+using Expenses_Tracker___Grupo_02;
 
-
-List<string> listCuenta = new List<string>();
-
+List<string> listAux = new List<string>();
+accounts aux = new accounts();
 
 //MENU PRINCIPAL
 var tableTitle = new Table();
 var option = "";
-var optionCuenta = "";
 var rule = new Rule("Menu");
 var tableMenu = new Table();
-
 tableTitle.AddColumn("Intec - Expenses Tracker").Centered();
 tableTitle.Expand();
 tableTitle.Columns[0].Centered();
-
 Menu:
-
 AnsiConsole.Write(tableTitle);
-
 rule.Centered();
 AnsiConsole.Write(rule);
 Console.WriteLine();
 
+
 option = AnsiConsole.Prompt(
     new SelectionPrompt<string>()
         .AddChoices(new[] {
-            "New transaction", "View transactions", "Edit transactions", "Help", "Exit"
+            "New transaction.", "View transactions.", "Edit items.", "Delete items.", "Help", "Exit"
         }));
 
 switch (option)
 {
-    case "New transaction":
+    case "New transaction.":
         Console.WriteLine("Enter the name of the transaction: ");
         var nameTransaction = Console.ReadLine();
         Console.Write("\nType [Expense/Income]: ");
         var type = Console.ReadLine();
         var account = "";
-        if (listCuenta.Count == 0)
+        if (listAux.Count == 0)
         {
             Console.WriteLine("\nIt looks like you haven't created an account type yet");
             Console.Write("What kind of account is it? ");
             account = Console.ReadLine();
-            listCuenta.Add(account);
+            listAux.Add(account);
 
         }
         else
         {
             var accountAux = new SelectionPrompt<string>();
-            foreach (var accounts in listCuenta)
+            foreach (var accounts in listAux)
             {
                 accountAux.AddChoice(accounts);
             }
@@ -67,7 +63,7 @@ switch (option)
             {
                 Console.WriteLine("\nWhat kind of account is it?");
                 account = Console.ReadLine();
-                listCuenta.Add(account);
+                listAux.Add(account);
             }
 
             //account = AnsiConsole.Prompt(
@@ -136,9 +132,63 @@ switch (option)
 
 
         break;
-    case "View transactions":
+    case "View transactions.":
         break;
-    case "Edit transactions":
+    case "Edit items.":
+        break;
+    case "Delete items.":
+        Items:
+        option = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .AddChoices(new[] {
+                    "Delete transactions.", "Delete accounts.", "Delete categories.", "Back", "Exit"
+                }));
+
+        switch (option)
+        {
+            case "Delete transactions.":
+                break;
+            case "Delete accounts.":
+                var deletedAccount = new MultiSelectionPrompt<string>();
+                foreach (var accounts in listAux)
+                {
+                    deletedAccount.AddChoice(accounts);
+                }
+                var deletedAccounts = AnsiConsole.Prompt(deletedAccount);
+
+                foreach (string fruit in deletedAccounts)
+                {
+                    aux.eliminarCategoria(listAux,fruit);
+                }
+
+                Console.WriteLine($"You delete those accounts.");
+
+                foreach (string fruit in listAux)
+                {
+                    Console.WriteLine(fruit);
+                }
+
+                option = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .AddChoices(new[] {
+                    "Back", "Exit"
+                }));
+
+                switch (option)
+                {
+                    case "Back":
+                        Console.Clear();
+                        goto Items;
+                }
+                break;
+            case "Delete categories.":
+                break;
+            case "Back":
+                goto Menu;
+            default:
+                break;
+        }
+
         break;
     case "Help":
         Console.WriteLine("Intec - Expenses Tracker will help you keep track of your money. \n" +
