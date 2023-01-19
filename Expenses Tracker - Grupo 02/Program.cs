@@ -242,15 +242,18 @@ class Program
                         if (listTransaction.Count == 0)
                         {
                             Console.WriteLine("No hay transacciones registradas.");
-                            break;
+                            
                         }
-                        Console.WriteLine("Transacciones registradas: ");
-                        var i = 1;
-                        foreach (var transaction in listTransaction)
+                        else
                         {
-                            tableTransactions.AddRow(new[] {transaction.Name, transaction.Type, transaction.Account,
+                            Console.WriteLine("Transacciones registradas: ");
+
+                            foreach (var transaction in listTransaction)
+                            {
+                                tableTransactions.AddRow(new[] {transaction.Name, transaction.Type, transaction.Account,
                             transaction.Category, transaction.Amount.ToString(),
                             transaction.Description, transaction.Date.ToString() });
+                            }
                         }
 
                         AnsiConsole.Write(tableTransactions);
@@ -385,7 +388,35 @@ class Program
                 switch (option)
                 {
                     case "Delete transactions.":
+                        Console.WriteLine("Select the transactions you want to remove.");
+                        var deletedTransaction = new MultiSelectionPrompt<string>().NotRequired();
+                        foreach (var transactions in listTransaction)
+                        {
+                            deletedTransaction.AddChoice(transactions.Name);
+                        }
+
+                        var deletedTransactions = AnsiConsole.Prompt(deletedTransaction);
+                        foreach (string transactions in deletedTransactions)
+                        {
+                            listTransaction.RemoveAll(t => t.Name == transactions);
+                        }
+
+                        Console.WriteLine($"You delete those transactions.");
+
+                        option = AnsiConsole.Prompt(
+                        new SelectionPrompt<string>()
+                        .AddChoices(new[] {
+                        "Back", "Exit"
+                        }));
+
+                        switch (option)
+                        {
+                            case "Back":
+                                Console.Clear();
+                                goto DeletedItems;
+                        }
                         break;
+                        
                     case "Delete accounts.":
                         Console.WriteLine("Select the accounts you want to remove.");
                         var deletedAccount = new MultiSelectionPrompt<string>().NotRequired();
