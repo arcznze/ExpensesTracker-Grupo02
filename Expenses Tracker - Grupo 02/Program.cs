@@ -9,6 +9,7 @@ using System.Security.Principal;
 using Expenses_Tracker___Grupo_02;
 using System.Transactions;
 using System.Collections;
+using System.Linq;
 
 public class Transaction
 {
@@ -16,7 +17,7 @@ public class Transaction
     public string Type { get; set; }
     public string Account { get; set; }
     public string Category { get; set; }
-    public string Amount { get; set; }
+    public decimal Amount { get; set; }
     public string Description { get; set; }
     public DateTime Date { get; set; }
 }
@@ -152,7 +153,7 @@ class Program
                             Type = type,
                             Account = account,
                             Category = category,
-                            Amount = amount,
+                            Amount = decimal.Parse(amount),
                             Description = description,
                             Date = DateTime.Now
                         };
@@ -320,7 +321,89 @@ class Program
                 switch (option)
                 {
                     case "Edit transactions.":
+
+                        Console.WriteLine("Select the transactions you want to edit.");
+                        var editedTransaction = new MultiSelectionPrompt<string>().NotRequired();
+                        foreach (var transactions in listTransaction)
+                        {
+                            editedTransaction.AddChoice(transactions.Name);
+                        }
+
+                        var editedTransactions = AnsiConsole.Prompt(editedTransaction);
+                        foreach (var transactions in editedTransactions)
+                        {
+                            var transactionToEdit = listTransaction.FirstOrDefault(t => t.Name == transactions);
+                            var editOption = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                                                .AddChoices(new[] { "Name", "Type", "Account", "Category", "Amount", "Description" }));
+                            switch (editOption)
+                            {
+                                case "Name":
+                                    Console.WriteLine("Enter the new name for the transaction: ");
+                                    var newName = Console.ReadLine();
+                                    transactionToEdit.Name = newName;
+                                    break;
+                                case "Type":
+                                    Console.WriteLine("Enter the new type for the transaction: ");
+                                    var newType = Console.ReadLine();
+                                    transactionToEdit.Type = newType;
+                                    break;
+                                case "Account":
+                                    Console.WriteLine("Enter the new account for the transaction: ");
+                                    var newAccounts = Console.ReadLine();
+                                    int index = listAccount.IndexOf(transactionToEdit.Account);
+                                    if (index != -1)
+                                    {
+                                        listAccount[index] = newAccounts;
+                                        transactionToEdit.Account = newAccounts;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("La cuenta no se encuentra en la lista de cuentas");
+                                    }
+                                    break;                                 
+                                case "Category":
+                                    Console.WriteLine("Enter the new category for the transaction: ");
+                                    var newCategorys = Console.ReadLine();
+                                    index = listCategory.IndexOf(transactionToEdit.Category);
+                                    if (index != -1)
+                                    {
+                                        listCategory[index] = newCategorys;
+                                        transactionToEdit.Account = newCategorys;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("La cuenta no se encuentra en la lista de categorias");
+                                    }
+                                    break;
+                                case "Amount":
+                                    Console.WriteLine("Enter the new amount for the transaction: ");
+                                    var newAmount = decimal.Parse(Console.ReadLine());
+                                    transactionToEdit.Amount = newAmount;
+                                    break;
+                                case "Description":
+                                    Console.WriteLine("Enter the new description for the transaction: ");
+                                    var newDescription = Console.ReadLine();
+                                    transactionToEdit.Description = newDescription;
+                                    break;
+                            }
+                            Console.WriteLine("Transaction edited successfully");
+                        }
+                        Console.WriteLine($"You edited those transactions.");
+
+                        option = AnsiConsole.Prompt(
+                        new SelectionPrompt<string>()
+                        .AddChoices(new[] {
+                        "Back", "Exit"
+                        }));
+
+                        switch (option)
+                        {
+                            case "Back":
+                                Console.Clear();
+                                goto EditItems;
+                        }
                         break;
+
                     case "Edit accounts.":
                         foreach (string accounts in listAccount)
                         {
