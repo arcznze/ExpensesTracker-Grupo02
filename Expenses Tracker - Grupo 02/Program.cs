@@ -81,6 +81,7 @@ class Program
                         }
                         Console.Write("\nType [Expense/Income]: ");
                         var type = Console.ReadLine();
+                        type = type.ToLower();
                         if (String.IsNullOrEmpty(nameTransaction))
                         {
                             Console.WriteLine("You must fill the form.\n");
@@ -88,7 +89,7 @@ class Program
                             Console.Clear();
                             goto NewTrans;
                         }
-                        else if (type != "Income" && type != "Expense" && type != "income" && type != "expense")
+                        else if (type != "income" && type != "expense")
                         {
                             Console.WriteLine("You must enter a valid type.\n");
                             Console.ReadKey();
@@ -157,6 +158,12 @@ class Program
                         Console.Write("\nCategory: " + category + "\n");
                         Console.Write("\nAmount: ");
                         decimal amount = decimal.Parse(Console.ReadLine());
+
+                        var rate = AnsiConsole.Prompt(
+                            new SelectionPrompt<string>().Title("Is the amount in Dominican pesos or dollars?")
+                                .AddChoices(new[] {
+                    "RD$", "USD$"
+                                }));
                         Console.Write("\nDescription: ");
                         var description = Console.ReadLine();
                         if (String.IsNullOrEmpty(description))
@@ -205,7 +212,7 @@ class Program
                         tableNewTransaction.AddRow("Type", type);
                         tableNewTransaction.AddRow("Type of account", account);
                         tableNewTransaction.AddRow("Category", category);
-                        tableNewTransaction.AddRow("Amount", amount.ToString());
+                        tableNewTransaction.AddRow("Amount", rate + amount.ToString());
                         tableNewTransaction.AddRow("Description", description);
                         tableNewTransaction.AddRow("Date / Time", dateTime);
                         AnsiConsole.Write(tableNewTransaction);
