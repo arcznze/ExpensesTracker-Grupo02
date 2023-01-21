@@ -17,7 +17,7 @@ public class Transaction
     public string Type { get; set; }
     public string Account { get; set; }
     public string Category { get; set; }
-    public decimal Amount { get; set; }
+    public float Amount { get; set; }
     public string Description { get; set; }
     public DateTime Date { get; set; }
 }
@@ -26,13 +26,16 @@ class Program
 {
     static void Main(string[] args)
     {
+        IBuscadorTasas buscadorTasas = new BuscadorTasas(); 
+        Convertir convertidor = new Convertir(buscadorTasas); 
+
         List<Transaction> listTransaction = new List<Transaction>();
-        List<decimal> balance = new List<decimal>();
+        List<float> balance = new List<float>();
         List<string> listAccount = new List<string>();
         List<string> listCategory = new List<string>();
         CRUDs aux = new CRUDs();
-        int expenseChart = 0;
-        int incomeChart = 0;
+        float expenseChart = 0;
+        float incomeChart = 0;
 
         //MENU PRINCIPAL
         var tableTitle = new Table();
@@ -157,13 +160,19 @@ class Program
 
                         Console.Write("\nCategory: " + category + "\n");
                         Console.Write("\nAmount: ");
-                        decimal amount = decimal.Parse(Console.ReadLine());
+                        float amount = float.Parse(Console.ReadLine());
 
                         var rate = AnsiConsole.Prompt(
                             new SelectionPrompt<string>().Title("Is the amount in Dominican pesos or dollars?")
                                 .AddChoices(new[] {
                     "RD$", "USD$"
                                 }));
+
+                        if (rate == "USD$")
+                        {
+                            amount = convertidor.ComprarDolares(amount);
+                        }
+
                         Console.Write("\nDescription: ");
                         var description = Console.ReadLine();
                         if (String.IsNullOrEmpty(description))
@@ -198,11 +207,11 @@ class Program
                         {
                             if (balance[i] < 0)
                             {
-                                expenseChart += int.Parse(balance[i].ToString());
+                                expenseChart += float.Parse(balance[i].ToString());
                             }
                             else
                             {
-                                incomeChart += int.Parse(balance[i].ToString());
+                                incomeChart += float.Parse(balance[i].ToString());
                             }
                         }
 
@@ -212,7 +221,7 @@ class Program
                         tableNewTransaction.AddRow("Type", type);
                         tableNewTransaction.AddRow("Type of account", account);
                         tableNewTransaction.AddRow("Category", category);
-                        tableNewTransaction.AddRow("Amount", rate + amount.ToString());
+                        tableNewTransaction.AddRow("Amount", "RD$" + amount.ToString());
                         tableNewTransaction.AddRow("Description", description);
                         tableNewTransaction.AddRow("Date / Time", dateTime);
                         AnsiConsole.Write(tableNewTransaction);
@@ -352,6 +361,7 @@ class Program
                         }
                         break;
                     case "Back":
+                        Console.Clear();
                         goto Menu;
                     default:
                         break;
@@ -424,7 +434,7 @@ class Program
                                     break;
                                 case "Amount":
                                     Console.WriteLine("Enter the new amount for the transaction: ");
-                                    var newAmount = decimal.Parse(Console.ReadLine());
+                                    var newAmount = float.Parse(Console.ReadLine());
                                     transactionToEdit.Amount = newAmount;
                                     break;
                                 case "Description":
@@ -500,6 +510,7 @@ class Program
                         }
                         break;
                     case "Back":
+                        Console.Clear();
                         goto Menu;
                     default:
                         break;
@@ -608,6 +619,7 @@ class Program
                         }
                         break;
                     case "Back":
+                        Console.Clear();
                         goto Menu;
                     default:
                         break;
