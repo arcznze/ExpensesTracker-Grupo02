@@ -207,7 +207,7 @@ public class Program
 
         if (rate == "USD$")
         {
-            amount = convertidor.ComprarDolares(amount);
+            amount = convertidor.DolaresAPesos(amount);
         }
 
         Console.Write("\nDescription: ");

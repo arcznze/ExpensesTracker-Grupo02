@@ -14,12 +14,13 @@ public class Convertir
     {
         this.buscadorTasas = buscadorTasas;
     }
-    public float ComprarDolares(float dolares)
+    public float DolaresAPesos(float dolares)
     {
-        var tasas = buscadorTasas.ObtenerTasas();
+        var tasas = buscadorTasas.ObtenerTasas().GetAwaiter().GetResult();
         var tasaVenta = tasas.Where(x => x.Entidad == "Banco BHD León"
-                                                 && x.MonedaOrigen == "DOP"
-                                                 && x.MonedaDestino == "USD").First();
+                                    && x.MonedaOrigen == "USD"
+                                    && x.MonedaDestino == "DOP").First();
+
         return dolares * tasaVenta.Valor;
     }
 }
