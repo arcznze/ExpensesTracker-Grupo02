@@ -10,6 +10,7 @@ using Expenses_Tracker___Grupo_02;
 using System.Transactions;
 using System.Collections;
 using System.Linq;
+using System.ComponentModel;
 
 public class Transaction
 {
@@ -170,7 +171,7 @@ class Program
 
                         if (rate == "USD$")
                         {
-                            amount = convertidor.ComprarDolares(amount);
+                            //amount = convertidor.DolaresAPesos(amount);
                         }
 
                         Console.Write("\nDescription: ");
