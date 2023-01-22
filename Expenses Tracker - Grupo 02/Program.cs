@@ -7,7 +7,7 @@ public class Transaction
     public string Type { get; set; }
     public string Account { get; set; }
     public string Category { get; set; }
-    public decimal Amount { get; set; }
+    public float Amount { get; set; }
     public string Description { get; set; }
     public DateTime Date { get; set; }
 }
@@ -15,6 +15,7 @@ public class Transaction
 class Program
 {
     private static List<Transaction> _listTransaction = new List<Transaction>();
+    private static List<float> _balance = new List<float>();
     private static List<string> _listAccount = new List<string>();
     private static List<string> _listCategory = new List<string>();
 
@@ -32,6 +33,7 @@ class Program
         var tableTitle = new Table();
         var option = "";
         var rule = new Rule("Menu");
+        var tableMenu = new Table();
         tableTitle.AddColumn("Intec - Expense Tracker").Centered();
         tableTitle.Expand();
         tableTitle.Columns[0].Centered();
@@ -39,13 +41,13 @@ class Program
         AnsiConsole.Write(tableTitle);
         rule.Centered();
         AnsiConsole.Write(rule);
-        Console.WriteLine();
+        Console.WriteLine("\n");
 
 
         option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .AddChoices(new[] {
-            "New item.", "View items.", "Edit items.", "Delete items.", "Help", "Exit"
+            "New item.", "View items.", "Edit items.", "Delete items.", "View balance report.", "Exit"
                 }));
         switch (option)
         {
@@ -62,8 +64,8 @@ class Program
             case "Delete items.":
                 DeleteItems();
                 break;
-            case "Help":
-                Help();
+            case "View balance report.":
+                viewBalance();
                 break;
             case "Exit":
                 Environment.Exit(0);
@@ -105,24 +107,44 @@ class Program
     }
     private static void NewTransaction()
     {
+        IBuscadorTasas buscadorTasas = new BuscadorTasas();
+        Convertir convertidor = new Convertir(buscadorTasas);
         CRUDs aux = new CRUDs();
+
         Console.Write("Enter the name of the transaction: ");
         var nameTransaction = Console.ReadLine();
         if (String.IsNullOrEmpty(nameTransaction))
         {
-            Console.WriteLine("You must fill the form.");
+            Console.WriteLine("You must fill the form.\n");
+            Console.ReadKey();
+            Console.Clear();
+            NewTransaction();
         }
         Console.Write("\nType [Expense/Income]: ");
         var type = Console.ReadLine();
+        type = type.ToLower();
+        if (String.IsNullOrEmpty(type))
+        {
+            Console.WriteLine("You must fill the form.\n");
+            Console.ReadKey();
+            Console.Clear();
+            NewTransaction();
+        }
+        else if (type != "income" && type != "expense")
+        {
+            Console.WriteLine("You must enter a valid type.\n");
+            Console.ReadKey();
+            Console.Clear();
+            NewTransaction();
+        }
         var account = "";
         var category = "";
         if (_listAccount.Count == 0)
         {
             Console.WriteLine("\nIt looks like you haven't created an account type yet");
-            Console.Write("What kind of account is it? ");
+            Console.Write("What kind of account is it? [Savings/Current/etc...] ");
             account = Console.ReadLine();
             aux.create(_listAccount, account);
-
         }
         else
         {
@@ -148,7 +170,7 @@ class Program
         if (_listCategory.Count == 0)
         {
             Console.WriteLine("\nIt looks like you haven't created a category type yet");
-            Console.Write("What kind of category is it? ");
+            Console.Write("What kind of category is it? [Home, Bills, Health, etc...] ");
             category = Console.ReadLine();
             aux.create(_listCategory, category);
 
@@ -175,11 +197,35 @@ class Program
 
         Console.Write("\nCategory: " + category + "\n");
         Console.Write("\nAmount: ");
-        var amount = Console.ReadLine();
+        float amount = float.Parse(Console.ReadLine());
+
+        var rate = AnsiConsole.Prompt(
+                            new SelectionPrompt<string>().Title("Is the amount in Dominican pesos or dollars?")
+                                .AddChoices(new[] {
+                    "RD$", "USD$"
+                                }));
+
+        if (rate == "USD$")
+        {
+            amount = convertidor.ComprarDolares(amount);
+        }
+
         Console.Write("\nDescription: ");
         var description = Console.ReadLine();
+        if (String.IsNullOrEmpty(description))
+        {
+            Console.WriteLine("You must fill the form.\n");
+            Console.ReadKey();
+            Console.Clear();
+            NewTransaction();
+        }
         string dateTime = DateTime.Now.ToString();
         Console.Write("\n");
+
+        if (type == "Expense" || type == "expense")
+        {
+            amount *= -1;
+        }
 
         var newTransaction = new Transaction
         {
@@ -187,11 +233,12 @@ class Program
             Type = type,
             Account = account,
             Category = category,
-            Amount = decimal.Parse(amount),
+            Amount = amount,
             Description = description,
             Date = DateTime.Now
         };
         _listTransaction.Add(newTransaction);
+        _balance.Add(amount);
 
         var tableNewTransaction = new Table();
         tableNewTransaction.AddColumn(nameTransaction);
@@ -199,7 +246,7 @@ class Program
         tableNewTransaction.AddRow("Type", type);
         tableNewTransaction.AddRow("Type of account", account);
         tableNewTransaction.AddRow("Category", category);
-        tableNewTransaction.AddRow("Amount", amount);
+        tableNewTransaction.AddRow("Amount", "RD$" + amount.ToString());
         tableNewTransaction.AddRow("Description", description);
         tableNewTransaction.AddRow("Date / Time", dateTime);
         AnsiConsole.Write(tableNewTransaction);
@@ -437,7 +484,7 @@ class Program
                             break;
                         case "Amount":
                             Console.WriteLine("Enter the new amount for the transaction: ");
-                            var newAmount = decimal.Parse(Console.ReadLine());
+                            var newAmount = float.Parse(Console.ReadLine());
                             transactionToEdit.Amount = newAmount;
                             break;
                         case "Description":
@@ -652,10 +699,40 @@ class Program
         }
         Console.WriteLine("Transaction deleted successfully.");
     }
-    private static void Help()
+    private static void viewBalance()
     {
-        Console.WriteLine("Intec - Expense Tracker will help you keep track of your money. \n" +
-                            "With simple and intuitive graphics you can check the progress of expenses.");
-        Console.ReadKey();
+        float expenseChart = 0;
+        float incomeChart = 0;
+
+        for (int i = 0; i < _balance.Count; i++)
+        {
+            if (_balance[i] < 0)
+            {
+                expenseChart += float.Parse(_balance[i].ToString());
+            }
+            else
+            {
+                incomeChart += float.Parse(_balance[i].ToString());
+            }
+        }
+
+        AnsiConsole.Write(new BarChart()
+                    .AddItem("Expense", expenseChart * -1, Color.Red)
+                    .AddItem("Income", incomeChart, Color.Blue));
+
+        Console.WriteLine("\n");
+
+        var option = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .AddChoices(new[] {
+                    "Back", "Exit"
+                }));
+
+        switch (option)
+        {
+            case "Back":
+                Console.Clear();
+                break;
+        }
     }
 }
