@@ -37,14 +37,14 @@ namespace Expenses_Tracker___Grupo_02
         //        Console.WriteLine($"{tasa.Entidad,-45}  {tasa.Valor,6}  {tasa.MonedaOrigen}->{tasa.MonedaDestino}");
         //}
 
-        public async Task<float> DolaresAPesos (float pesos)
+        public float DolaresAPesos (float dolares)
         {
-            var tasas = await buscadorTasas.ObtenerTasas();
+            var tasas = buscadorTasas.ObtenerTasas().GetAwaiter().GetResult();
             var tasaVenta = tasas.Where(x => x.Entidad == "Banco BHD León"
                                         && x.MonedaOrigen == "USD"
                                         && x.MonedaDestino == "DOP").First();
 
-            return (float)Math.Round((decimal)pesos * tasaVenta.Valor, 2);
+            return dolares * tasaVenta.Valor;
         }
 
 

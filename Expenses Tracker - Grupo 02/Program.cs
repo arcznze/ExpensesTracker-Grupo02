@@ -171,7 +171,7 @@ class Program
 
                         if (rate == "USD$")
                         {
-                            //amount = convertidor.DolaresAPesos(amount);
+                            amount = convertidor.DolaresAPesos(amount);
                         }
 
                         Console.Write("\nDescription: ");

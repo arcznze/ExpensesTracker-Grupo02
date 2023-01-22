@@ -17,11 +17,11 @@ namespace Expenses_Tracker___Grupo_02
     public struct Tasa
     {
         public string Entidad;
-        public decimal Valor;
+        public float Valor;
         public string MonedaOrigen;
         public string MonedaDestino;
 
-        public Tasa(decimal valor, string monedaOrigen, string monedaDestino, string entidad = "")
+        public Tasa(float valor, string monedaOrigen, string monedaDestino, string entidad = "")
         {
             Entidad = entidad;
             Valor = valor;
@@ -63,8 +63,8 @@ namespace Expenses_Tracker___Grupo_02
                 var sellPriceConSimbolo = i.Children[2].TextContent.Split('\n')[1].Trim();
                 float buyPrice = buyPriceConSimbolo != "" ? Convert.ToSingle(buyPriceConSimbolo.Replace("$", "")) : 0.0f;
                 float sellPrice = sellPriceConSimbolo != "" ? Convert.ToSingle(sellPriceConSimbolo.Replace("$", "")) : 0.0f;
-                tasas.Add(new Tasa((decimal)buyPrice, "USD", "DOP", bankName));
-                tasas.Add(new Tasa((decimal)sellPrice, "DOP", "USD", bankName));
+                tasas.Add(new Tasa(buyPrice, "USD", "DOP", bankName));
+                tasas.Add(new Tasa(sellPrice, "DOP", "USD", bankName));
             }
             return tasas;
 
