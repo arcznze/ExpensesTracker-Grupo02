@@ -12,12 +12,12 @@ public class Transaction
     public DateTime Date { get; set; }
 }
 
-class Program
+public class Program
 {
-    private static List<Transaction> _listTransaction = new List<Transaction>();
-    private static List<float> _balance = new List<float>();
-    private static List<string> _listAccount = new List<string>();
-    private static List<string> _listCategory = new List<string>();
+    public static List<Transaction> _listTransaction = new List<Transaction>();
+    public static List<float> _balance = new List<float>();
+    public static List<string> _listAccount = new List<string>();
+    public static List<string> _listCategory = new List<string>();
 
     static void Main(string[] args)
     {
@@ -74,7 +74,7 @@ class Program
                 break;
         }
     }
-    private static void NewItems()
+    public static void NewItems()
     {
         Console.Clear();
 
@@ -105,7 +105,7 @@ class Program
         }
 
     }
-    private static void NewTransaction()
+    public static void NewTransaction()
     {
         IBuscadorTasas buscadorTasas = new BuscadorTasas();
         Convertir convertidor = new Convertir(buscadorTasas);
@@ -270,7 +270,7 @@ class Program
         Console.WriteLine("Transaction added successfully.");
     }
 
-    private static void NewAccount()
+    public static void NewAccount()
     {
         CRUDs aux = new CRUDs();
         Console.Write("What kind of account is it? ");
@@ -295,7 +295,7 @@ class Program
         Console.WriteLine("Account added successfully.");
     }
 
-    private static void NewCategory()
+    public static void NewCategory()
     {
         CRUDs aux = new CRUDs();
         Console.Write("What kind of category is it? ");
@@ -319,7 +319,7 @@ class Program
         }
     }
 
-    private static void ViewItems()
+    public static void ViewItems()
     {
         CRUDs aux = new CRUDs();
         var option = AnsiConsole.Prompt(
@@ -415,7 +415,7 @@ class Program
         }
         Console.WriteLine("Transaction Viewed successfully.");
     }
-    private static void EditItems()
+    public static void EditItems()
     {
         CRUDs aux = new CRUDs();
 
@@ -578,7 +578,7 @@ class Program
         }
     }
 
-    private static void DeleteItems()
+    public static void DeleteItems()
     {
         CRUDs aux = new CRUDs();
 
@@ -699,7 +699,7 @@ class Program
         }
         Console.WriteLine("Transaction deleted successfully.");
     }
-    private static void viewBalance()
+    public static void viewBalance()
     {
         float expenseChart = 0;
         float incomeChart = 0;
