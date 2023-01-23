@@ -24,12 +24,12 @@ namespace TestExpensesTracker
         public void TestNewCategory()
         {
             // Arrange
-            CRUDs aux = new CRUDs();
+            CRUDs sut = new CRUDs();
             string newCategory = "home";
             List<string> _listAccount = new List<string>();
 
             // Act
-            aux.create(_listAccount, newCategory);
+            sut.create(_listAccount, newCategory);
 
             // Assert
             Assert.IsTrue(_listAccount.Contains(newCategory));
@@ -53,8 +53,8 @@ namespace TestExpensesTracker
             });
 
             // Act
-            var editedTransactions = new List<string> { "Test Transaction" };
-            foreach (var transactions in editedTransactions)
+            var sut = new List<string> { "Test Transaction" };
+            foreach (var transactions in sut)
             {
                 var transactionToEdit = _listTransaction.FirstOrDefault(t => t.Name == transactions);
                 var editOption = "Amount"; // Seleccionar opcion de edicion
