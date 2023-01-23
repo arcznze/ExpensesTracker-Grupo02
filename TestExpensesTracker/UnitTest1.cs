@@ -10,11 +10,11 @@ namespace TestExpensesTracker
         public void TestNewAccount()
         {
             // Arrange
-            CRUDs aux = new CRUDs();
+            CRUDs sut = new CRUDs();
             string newAccount = "Savings";
 
             // Act
-            aux.create(_listAccount, newAccount);
+            sut.create(_listAccount, newAccount);
 
             // Assert
             Assert.IsTrue(_listAccount.Contains(newAccount));
