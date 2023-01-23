@@ -5,22 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expenses_Tracker___Grupo_02
+namespace Expenses_Tracker___Grupo_02;
+
+public class Convertir
 {
-    public class Convertir
+    IBuscadorTasas buscadorTasas;
+    public Convertir(IBuscadorTasas buscadorTasas)
     {
-        IBuscadorTasas buscadorTasas;
-        public Convertir(IBuscadorTasas buscadorTasas)
-        {
-            this.buscadorTasas = buscadorTasas;
-        }
-        public float ComprarDolares(float dolares)
-        {
-            var tasas = buscadorTasas.ObtenerTasas();
-            var tasaVenta = tasas.Where(x => x.Entidad == "Banco BHD León"
-                                                     && x.MonedaOrigen == "DOP"
-                                                     && x.MonedaDestino == "USD").First();
-            return dolares * tasaVenta.Valor;
-        }
+        this.buscadorTasas = buscadorTasas;
     }
+    public float DolaresAPesos(float dolares)
+    {
+        var tasas = buscadorTasas.ObtenerTasas().GetAwaiter().GetResult();
+        var tasaVenta = tasas.Where(x => x.Entidad == "Banco BHD León"
+                                    && x.MonedaOrigen == "USD"
+                                    && x.MonedaDestino == "DOP").FirstOrDefault();
+
+        return dolares * tasaVenta.Valor;
+    }
+}
 }

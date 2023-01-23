@@ -13,7 +13,7 @@ using AngleSharp;
 
 namespace Expenses_Tracker___Grupo_02
 {
-    // esto es símplemente para agrupar los valores de cada tasa
+    // esto es para agrupar los valores de cada tasa
     public struct Tasa
     {
         public string Entidad;
@@ -34,7 +34,7 @@ namespace Expenses_Tracker___Grupo_02
     // Esta interfaz es para poder hacer un stub de BuscadorTasas para las Pruebas Unitarias
     public interface IBuscadorTasas
     {
-        public List<Tasa> ObtenerTasas();
+        public Task<List<Tasa>> ObtenerTasas();
     }
 
     /* Esta es la clase que hace un request a infodolar.com.do y hace un scrapping de las tasas.
@@ -43,16 +43,13 @@ namespace Expenses_Tracker___Grupo_02
     de hacer un stub del HttpClient o del BrowsingContext porque se complicaría demasiado).*/
     public class BuscadorTasas : IBuscadorTasas
     {
-        /* Este método debería ser async para poder hacerle un await al método "OpenAsync". 
-         La razón por la que no lo puse async, es para que lo hagan ustedes mismos cuando lo integren
-        a su proyecto. */
-        public List<Tasa> ObtenerTasas()
+        public async Task<List<Tasa>> ObtenerTasas()
         {
             List<Tasa> tasas = new List<Tasa>();
             var config = Configuration.Default.WithDefaultLoader();
             var address = "https://www.infodolar.com.do/";
             var context = BrowsingContext.New(config);
-            var document = context.OpenAsync(address).GetAwaiter().GetResult(); //deben de sustituirlo por un await
+            var document = await context.OpenAsync(address);
             var cells = document.QuerySelectorAll("table#Dolar tbody tr");
 
             foreach (var i in cells)
