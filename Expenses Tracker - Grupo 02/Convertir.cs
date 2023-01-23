@@ -19,7 +19,7 @@ public class Convertir
         var tasas = buscadorTasas.ObtenerTasas().GetAwaiter().GetResult();
         var tasaVenta = tasas.Where(x => x.Entidad == "Banco BHD León"
                                     && x.MonedaOrigen == "USD"
-                                    && x.MonedaDestino == "DOP").First();
+                                    && x.MonedaDestino == "DOP").FirstOrDefault();
 
         return dolares * tasaVenta.Valor;
     }

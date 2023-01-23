@@ -5,15 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using AngleSharp;
 
-/*
- * Este archivo completo lo pueden copiar y pegar en su proyecto.
- * Para esto, tienen que tener instalado "AngleSharp" en su proyecto, y asegurense
- * de cambiar el nombre del namespace al que están usando.
- */
-
 namespace Expenses_Tracker___Grupo_02
 {
-    // esto es símplemente para agrupar los valores de cada tasa
+    // esto es para agrupar los valores de cada tasa
     public struct Tasa
     {
         public string Entidad;
@@ -43,9 +37,6 @@ namespace Expenses_Tracker___Grupo_02
     de hacer un stub del HttpClient o del BrowsingContext porque se complicaría demasiado).*/
     public class BuscadorTasas : IBuscadorTasas
     {
-        /* Este método debería ser async para poder hacerle un await al método "OpenAsync". 
-         La razón por la que no lo puse async, es para que lo hagan ustedes mismos cuando lo integren
-        a su proyecto. */
         public async Task<List<Tasa>> ObtenerTasas()
         {
             List<Tasa> tasas = new List<Tasa>();
@@ -53,7 +44,6 @@ namespace Expenses_Tracker___Grupo_02
             var address = "https://www.infodolar.com.do/";
             var context = BrowsingContext.New(config);
             var document = await context.OpenAsync(address);
-            //var document = context.OpenAsync(address).GetAwaiter().GetResult(); //deben de sustituirlo por un await
             var cells = document.QuerySelectorAll("table#Dolar tbody tr");
 
             foreach (var i in cells)
