@@ -39,7 +39,7 @@ namespace TestExpensesTracker
         public void TestEditTransaction()
         {
             // Arrange
-            CRUDs aux = new CRUDs();
+            //CRUDs aux = new CRUDs();
             // Crear una transacción de prueba
             _listTransaction.Add(new Transaction
             {
@@ -81,5 +81,24 @@ namespace TestExpensesTracker
             Assert.AreEqual(150, editedTransaction.Amount);
             Assert.AreEqual("Homes", editedTransaction.Category);
         }
+
+        [TestMethod]
+        public void TestDeleteCategory()
+        {
+            // Arrange
+            CRUDs aux = new CRUDs();
+            string sut = "home";
+            List<string> _listAccount = new List<string>();
+
+            // Act
+            aux.create(_listAccount, sut);
+            aux.delete(_listAccount, sut);
+
+            // Assert
+            Assert.IsFalse(_listAccount.Contains(sut));
+        }
+
+
+
     }
 }
